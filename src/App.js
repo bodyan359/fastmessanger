@@ -1,42 +1,69 @@
 import React from 'react';
-import { Button, FormControl, InputLabel, Input} from '@material-ui/core';
+
 import './App.css';
 import Message from './Message';
+
+import { Button, FormControl, InputLabel, Input, IconButton} from '@material-ui/core';
+import FlipMove from 'react-flip-move';
+import SendIcon from '@material-ui/icons/Send';
+import Icon from '@material-ui/core/Icon';
+
+import db from './firebase';
+import firebase from 'firebase';
 
 function App() {
   const [input, setInput] = React.useState('');
   const [messages, setMessages] = React.useState([]);
-  const [userName, setUserName] = React.useState('Anonymous');
+  const [username, setUsername] = React.useState('');
 
   // console.log('input',input);
   // console.log('messages',messages);
 
+  //adding to db
   React.useEffect(() => {
-    
-  }, [input]);
+    // run once when the app component loads
+    db.collection('messages').orderBy('timestamp', 'desc')
+    .onSnapshot(snapshot => {
+      setMessages(snapshot.docs.map(doc => ({id: doc.id, message: doc.data()})));
+    });
+  }, []);
+
+  React.useEffect(() => {
+    setUsername(prompt('Enter your nickname'));
+  }, []);
 
   const sendMessage = (event) => {
     event.preventDefault(); //dont refresh page on clicking 'enter'
-    setMessages([...messages, input]);
+
+    db.collection('messages').add({
+      data: input,
+      username: username,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    })
+
+    // setMessages([...messages, {username: username, text: input}]);
     setInput('');
   };
 
   return (
     <div className="App">
+      <img src="https://web.telegram.org/img/logo_share.png" />
         <h1>FastMessanger</h1>
-        <form>
-          <FormControl>
+        <h2>Welcome {username}</h2>
+        <FlipMove>
+          {messages.map(({id,message}) => (
+            <Message key={id} username={username} message={message}/>
+          ))}
+        </FlipMove>
+        <form className="app__form">
+          <FormControl className="app__formControl">
             <InputLabel >Enter a message...</InputLabel>
-            <Input value={input} onChange={event => setInput(event.target.value)} />
-            <Button variant="contained" color="primary" disabled={!input} type='submit' onClick={sendMessage}>Send Message</Button>
+            <Input className="app__input" placeholder='Enter a message' value={input} onChange={event => setInput(event.target.value)} />
+            <IconButton className="app__iconButton" variant="contained" color="primary" disabled={!input} type='submit' onClick={sendMessage}>
+              <SendIcon />
+            </IconButton>
           </FormControl>
         </form>
-      {
-        messages.map((message,id) => (
-          <Message key={id} text={message} />
-        ))
-      }
-
     </div>
   );
 }
