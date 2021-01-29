@@ -2,6 +2,7 @@
   padding: 10px;
   margin: 10px;
   width: fit-content;
+  max-width: 100%;
 }
 .message__user {
   margin-left: auto;
