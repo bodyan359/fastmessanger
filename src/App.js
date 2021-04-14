@@ -51,7 +51,7 @@ function App() {
     <div className="App">
       <img alt="logo" src="https://web.telegram.org/img/logo_share.png" />
       <h1>FastMessenger</h1>
-      <h2>Welcome {username || "Anonymous"f}</h2>
+      <h2>Welcome {username || "Anonymous"}</h2>
       <FlipMove>
         {messages.map(({ id, message }) => (
           <Message key={id} username={username} message={message} />
