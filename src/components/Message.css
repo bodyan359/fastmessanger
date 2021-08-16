@@ -3,6 +3,7 @@
   margin: 25px;
   width: fit-content;
   max-width: 75ch;
+  min-width: 15ch;
   word-wrap: break-word;
 }
 .message__user {
@@ -10,7 +11,14 @@
   color: white;
   text-align: left !important;
   max-width: 75ch;
+  min-width: 15ch;
   word-wrap: break-word;
+}
+
+.content {
+  flex-grow: 1;
+  background: red;
+  padding: 15px;
 }
 
 .message__userCard {

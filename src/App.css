@@ -1,19 +1,27 @@
 .App {
   text-align: center;
 }
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 .app__form {
-  position: fixed;
+  text-align: center;
+  position: sticky;
   bottom: 0;
   z-index: 1;
-  width: 100%;
+  min-width: 70%;
   background-color: whitesmoke;
-  margin: 15px;
+  padding: 25px;
+  padding-top: 5px;
 }
 
 .app__formControl {
   display: flex !important;
   flex-direction: row !important;
+  min-width: 80% !important;
   /* contain: 100% !important; */
 }
 

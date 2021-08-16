@@ -4,9 +4,13 @@ import "./Message.css";
 
 const Message = React.forwardRef(({ username, message }, ref) => {
   const isUser = username === message.username;
-
   return (
-    <div ref={ref} className={`message ${isUser && "message__user"}`}>
+    <div
+      ref={ref}
+      className={
+        message.timestamp + ` message ${isUser ? "message__user" : ""}`
+      }
+    >
       <Card className={isUser ? "message__userCard" : "message__guestCard"}>
         <CardContent>
           <Typography color="textPrimary" variant="h5" component="h2">
