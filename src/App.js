@@ -17,12 +17,9 @@ import firebase from "firebase";
 
 function App() {
   const [input, setInput] = React.useState("");
-  const [messages, setMessages] = React.useState([]); // Messages
+  const [messages, setMessages] = React.useState([]);
   const [username, setUsername] = React.useState("");
   const [roomName, setRoomName] = React.useState([]);
-  // console.log('input',input);
-  // console.log('messages',messages);
-  console.log(username);
 
   //adding to db
   React.useEffect(() => {
@@ -34,6 +31,12 @@ function App() {
           snapshot.docs.map((doc) => ({ id: doc.id, message: doc.data() }))
         );
       });
+
+    db.collection("rooms").onSnapshot((snapshot) => {
+      setRoomName(
+        snapshot.docs.map((doc) => ({ id: doc.id, name: doc.data() }))
+      );
+    });
   }, []);
 
   const drawerWidth = 240;
@@ -62,18 +65,6 @@ function App() {
     },
   }));
   const classes = useStyles();
-
-  //adding to db
-  // React.useEffect(() => {
-  //   // run once when the app component loads
-  //   db.collection("")
-  //     .orderBy("timestamp", "desc")
-  //     .onSnapshot((snapshot) => {
-  //       setRoomName(
-  //         snapshot.docs.map((doc) => ({ id: doc.id, message: doc.data() }))
-  //       );
-  //     });
-  // }, []);
 
   React.useEffect(() => {
     setUsername(prompt("Enter your nickname"));
@@ -104,7 +95,7 @@ function App() {
         </Toolbar>
       </AppBar>
       <div className="Menu">
-        <RoomMenu roomName={roomName} />
+        <RoomMenu roomName={roomName} username={username} />
       </div>
       <main className={classes.content}>
         <div className={classes.toolbar} />

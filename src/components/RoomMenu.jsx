@@ -8,9 +8,14 @@ import Drawer from "@material-ui/core/Drawer";
 import List from "@material-ui/core/List";
 import AddIcon from "@material-ui/icons/Add";
 
-const RoomMenu = React.forwardRef(({ roomName }, ref) => {
+import db from "../firebase";
+
+const RoomMenu = React.forwardRef(({ roomName, username }, ref) => {
+  // const [input, setInput] = React.useState("");
+
   const drawerWidth = 240;
 
+  console.log("roomName", roomName);
   const useStyles = makeStyles((theme) => ({
     root: {
       display: "flex",
@@ -35,6 +40,18 @@ const RoomMenu = React.forwardRef(({ roomName }, ref) => {
     },
   }));
 
+  const createRoom = (event) => {
+    let text = prompt("Please enter room name:", "PJATK Students");
+
+    db.collection("rooms").add({
+      id: username,
+      name: text,
+    });
+
+    // setMessages([...messages, {username: username, text: input}]);
+    // setInput("");
+  };
+
   const classes = useStyles();
 
   return (
@@ -51,13 +68,14 @@ const RoomMenu = React.forwardRef(({ roomName }, ref) => {
       <Divider />
 
       <List>
-        <ListItem button>
+        <ListItem button onClick={createRoom}>
           <ListItemText primary="Create new room" />
           <AddIcon />
         </ListItem>
-        {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemText primary={text} />
+        <Divider />
+        {roomName.map(({ id, name }) => (
+          <ListItem button key={id}>
+            <ListItemText primary={name.name} />
           </ListItem>
         ))}
       </List>
