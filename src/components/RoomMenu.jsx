@@ -11,9 +11,6 @@ import AddIcon from "@material-ui/icons/Add";
 import db from "../firebase";
 
 const RoomMenu = React.forwardRef(({ roomName, username }, ref) => {
-  // eslint-disable-next-line no-unused-vars
-  const [messages, setMessages] = React.useState([]);
-
   const drawerWidth = 240;
 
   const useStyles = makeStyles((theme) => ({
@@ -51,16 +48,6 @@ const RoomMenu = React.forwardRef(({ roomName, username }, ref) => {
 
   const openRoom = (roomID) => {
     localStorage.setItem("roomID", roomID);
-    roomID &&
-      db
-        .collection("rooms")
-        .doc(roomID)
-        .collection("messages")
-        .onSnapshot((snapshot) => {
-          setMessages(
-            snapshot.docs.map((doc) => ({ id: doc.id, message: doc.data() }))
-          );
-        });
   };
 
   const classes = useStyles();

@@ -20,24 +20,19 @@ function App() {
   const [messages, setMessages] = React.useState([]);
   const [username, setUsername] = React.useState("");
   const [roomName, setRoomName] = React.useState([]);
-  const [roomID, setRoomID] = React.useState(localStorage.getItem("roomID"));
-  console.log("CONST_ROOM_ID", roomID);
+
   React.useEffect(() => {
-    console.log("RRROMID", roomID);
-    setRoomID(localStorage.getItem("roomID"));
-    roomID &&
-      db
-        .collection("rooms")
-        .doc(roomID)
-        .collection("messages")
-        .orderBy("timestamp", "desc")
-        .onSnapshot((snapshot) => {
-          setMessages(
-            snapshot.docs.map((doc) => ({ id: doc.id, message: doc.data() }))
-          );
-        });
+    db.collection("rooms")
+      .doc(localStorage.getItem("roomID"))
+      .collection("messages")
+      .orderBy("timestamp", "desc")
+      .onSnapshot((snapshot) => {
+        setMessages(
+          snapshot.docs.map((doc) => ({ id: doc.id, message: doc.data() }))
+        );
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roomID]);
+  }, [localStorage.getItem("roomID")]);
 
   React.useEffect(() => {
     db.collection("rooms").onSnapshot((snapshot) => {
@@ -80,10 +75,11 @@ function App() {
 
   const sendMessage = (event) => {
     event.preventDefault(); //dont refresh page on clicking 'enter'
-    let roomID = localStorage.getItem("roomID");
 
-    roomID &&
-      db.collection("rooms").doc(roomID).collection("messages").add({
+    db.collection("rooms")
+      .doc(localStorage.getItem("roomID"))
+      .collection("messages")
+      .add({
         data: input,
         username: username,
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
