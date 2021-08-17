@@ -11,11 +11,11 @@ import AddIcon from "@material-ui/icons/Add";
 import db from "../firebase";
 
 const RoomMenu = React.forwardRef(({ roomName, username }, ref) => {
-  // const [input, setInput] = React.useState("");
+  // eslint-disable-next-line no-unused-vars
+  const [messages, setMessages] = React.useState([]);
 
   const drawerWidth = 240;
 
-  console.log("roomName", roomName);
   const useStyles = makeStyles((theme) => ({
     root: {
       display: "flex",
@@ -47,9 +47,20 @@ const RoomMenu = React.forwardRef(({ roomName, username }, ref) => {
       id: username,
       name: text,
     });
+  };
 
-    // setMessages([...messages, {username: username, text: input}]);
-    // setInput("");
+  const openRoom = (roomID) => {
+    localStorage.setItem("roomID", roomID);
+    roomID &&
+      db
+        .collection("rooms")
+        .doc(roomID)
+        .collection("messages")
+        .onSnapshot((snapshot) => {
+          setMessages(
+            snapshot.docs.map((doc) => ({ id: doc.id, message: doc.data() }))
+          );
+        });
   };
 
   const classes = useStyles();
@@ -74,7 +85,7 @@ const RoomMenu = React.forwardRef(({ roomName, username }, ref) => {
         </ListItem>
         <Divider />
         {roomName.map(({ id, name }) => (
-          <ListItem button key={id}>
+          <ListItem button key={id} onClick={() => openRoom(id)}>
             <ListItemText primary={name.name} />
           </ListItem>
         ))}

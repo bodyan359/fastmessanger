@@ -20,18 +20,26 @@ function App() {
   const [messages, setMessages] = React.useState([]);
   const [username, setUsername] = React.useState("");
   const [roomName, setRoomName] = React.useState([]);
-
-  //adding to db
+  const [roomID, setRoomID] = React.useState(localStorage.getItem("roomID"));
+  console.log("CONST_ROOM_ID", roomID);
   React.useEffect(() => {
-    // run once when the app component loads
-    db.collection("messages")
-      .orderBy("timestamp", "desc")
-      .onSnapshot((snapshot) => {
-        setMessages(
-          snapshot.docs.map((doc) => ({ id: doc.id, message: doc.data() }))
-        );
-      });
+    console.log("RRROMID", roomID);
+    setRoomID(localStorage.getItem("roomID"));
+    roomID &&
+      db
+        .collection("rooms")
+        .doc(roomID)
+        .collection("messages")
+        .orderBy("timestamp", "desc")
+        .onSnapshot((snapshot) => {
+          setMessages(
+            snapshot.docs.map((doc) => ({ id: doc.id, message: doc.data() }))
+          );
+        });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [roomID]);
 
+  React.useEffect(() => {
     db.collection("rooms").onSnapshot((snapshot) => {
       setRoomName(
         snapshot.docs.map((doc) => ({ id: doc.id, name: doc.data() }))
@@ -40,7 +48,7 @@ function App() {
   }, []);
 
   const drawerWidth = 240;
-  //styles by MUI
+
   const useStyles = makeStyles((theme) => ({
     root: {
       display: "flex",
@@ -72,14 +80,14 @@ function App() {
 
   const sendMessage = (event) => {
     event.preventDefault(); //dont refresh page on clicking 'enter'
+    let roomID = localStorage.getItem("roomID");
 
-    db.collection("messages").add({
-      data: input,
-      username: username,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-    });
-
-    // setMessages([...messages, {username: username, text: input}]);
+    roomID &&
+      db.collection("rooms").doc(roomID).collection("messages").add({
+        data: input,
+        username: username,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      });
     setInput("");
   };
 
