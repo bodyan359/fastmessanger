@@ -20,10 +20,12 @@ function App() {
   const [messages, setMessages] = React.useState([]);
   const [username, setUsername] = React.useState("");
   const [roomName, setRoomName] = React.useState([]);
+  const [roomID, setRoomID] = React.useState("PjBDnTCDD1IlMLgQsXh6");
+  console.log("ROOMID", roomID);
 
   React.useEffect(() => {
     db.collection("rooms")
-      .doc(localStorage.getItem("roomID"))
+      .doc(roomID)
       .collection("messages")
       .orderBy("timestamp", "desc")
       .onSnapshot((snapshot) => {
@@ -31,8 +33,7 @@ function App() {
           snapshot.docs.map((doc) => ({ id: doc.id, message: doc.data() }))
         );
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [localStorage.getItem("roomID")]);
+  }, [roomID]);
 
   React.useEffect(() => {
     db.collection("rooms").onSnapshot((snapshot) => {
@@ -76,14 +77,11 @@ function App() {
   const sendMessage = (event) => {
     event.preventDefault(); //dont refresh page on clicking 'enter'
 
-    db.collection("rooms")
-      .doc(localStorage.getItem("roomID"))
-      .collection("messages")
-      .add({
-        data: input,
-        username: username,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-      });
+    db.collection("rooms").doc(roomID).collection("messages").add({
+      data: input,
+      username: username,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    });
     setInput("");
   };
 
@@ -99,7 +97,12 @@ function App() {
         </Toolbar>
       </AppBar>
       <div className="Menu">
-        <RoomMenu roomName={roomName} username={username} />
+        <RoomMenu
+          roomName={roomName}
+          username={username}
+          roomID={roomID}
+          setRoomID={setRoomID}
+        />
       </div>
       <main className={classes.content}>
         <div className={classes.toolbar} />

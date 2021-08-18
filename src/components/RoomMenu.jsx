@@ -10,76 +10,77 @@ import AddIcon from "@material-ui/icons/Add";
 
 import db from "../firebase";
 
-const RoomMenu = React.forwardRef(({ roomName, username }, ref) => {
-  const drawerWidth = 240;
+const RoomMenu = React.forwardRef(
+  ({ roomName, username, roomID, setRoomID }, ref) => {
+    const drawerWidth = 240;
+    const useStyles = makeStyles((theme) => ({
+      root: {
+        display: "flex",
+      },
+      appBar: {
+        width: `calc(100% - ${drawerWidth}px)`,
+        marginLeft: drawerWidth,
+      },
+      drawer: {
+        width: drawerWidth,
+        flexShrink: 0,
+      },
+      drawerPaper: {
+        width: drawerWidth,
+      },
+      // necessary for content to be below app bar
+      toolbar: theme.mixins.toolbar,
+      content: {
+        flexGrow: 1,
+        backgroundColor: theme.palette.background.default,
+        padding: theme.spacing(3),
+      },
+    }));
 
-  const useStyles = makeStyles((theme) => ({
-    root: {
-      display: "flex",
-    },
-    appBar: {
-      width: `calc(100% - ${drawerWidth}px)`,
-      marginLeft: drawerWidth,
-    },
-    drawer: {
-      width: drawerWidth,
-      flexShrink: 0,
-    },
-    drawerPaper: {
-      width: drawerWidth,
-    },
-    // necessary for content to be below app bar
-    toolbar: theme.mixins.toolbar,
-    content: {
-      flexGrow: 1,
-      backgroundColor: theme.palette.background.default,
-      padding: theme.spacing(3),
-    },
-  }));
+    const createRoom = (event) => {
+      let text = prompt("Please enter room name:", "PJATK Students");
 
-  const createRoom = (event) => {
-    let text = prompt("Please enter room name:", "PJATK Students");
+      db.collection("rooms").add({
+        id: username,
+        name: text,
+      });
+    };
 
-    db.collection("rooms").add({
-      id: username,
-      name: text,
-    });
-  };
+    const openRoom = (_roomID) => {
+      setRoomID(_roomID);
+    };
 
-  const openRoom = (roomID) => {
-    localStorage.setItem("roomID", roomID);
-  };
+    const classes = useStyles();
 
-  const classes = useStyles();
-
-  return (
-    <Drawer
-      ref={ref}
-      className={classes.drawer}
-      variant="permanent"
-      classes={{
-        paper: classes.drawerPaper,
-      }}
-      anchor="left"
-    >
-      <div className={classes.toolbar} />
-      <Divider />
-
-      <List>
-        <ListItem button onClick={createRoom}>
-          <ListItemText primary="Create new room" />
-          <AddIcon />
-        </ListItem>
+    return (
+      <Drawer
+        ref={ref}
+        className={classes.drawer}
+        variant="permanent"
+        classes={{
+          paper: classes.drawerPaper,
+        }}
+        anchor="left"
+      >
+        <div className={classes.toolbar} />
         <Divider />
-        {roomName.map(({ id, name }) => (
-          <ListItem button key={id} onClick={() => openRoom(id)}>
-            <ListItemText primary={name.name} />
+
+        <List>
+          <ListItem button onClick={createRoom}>
+            <ListItemText primary="Create new room" />
+            <AddIcon />
           </ListItem>
-        ))}
-      </List>
-      <Divider />
-    </Drawer>
-  );
-});
+          <Divider />
+          {roomName.map(({ id, name }) => (
+            <ListItem button key={id} onClick={() => openRoom(id)}>
+              <ListItemText primary={name.name} />
+            </ListItem>
+          ))}
+        </List>
+        <Divider />
+      </Drawer>
+    );
+  }
+);
 
 export default RoomMenu;
