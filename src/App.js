@@ -19,9 +19,8 @@ function App() {
   const [input, setInput] = React.useState("");
   const [messages, setMessages] = React.useState([]);
   const [username, setUsername] = React.useState("");
-  const [roomName, setRoomName] = React.useState([]);
+  const [roomNames, setRoomNames] = React.useState([]);
   const [roomID, setRoomID] = React.useState("PjBDnTCDD1IlMLgQsXh6");
-  console.log("ROOMID", roomID);
 
   React.useEffect(() => {
     db.collection("rooms")
@@ -37,7 +36,7 @@ function App() {
 
   React.useEffect(() => {
     db.collection("rooms").onSnapshot((snapshot) => {
-      setRoomName(
+      setRoomNames(
         snapshot.docs.map((doc) => ({ id: doc.id, name: doc.data() }))
       );
     });
@@ -98,9 +97,8 @@ function App() {
       </AppBar>
       <div className="Menu">
         <RoomMenu
-          roomName={roomName}
+          roomNames={roomNames}
           username={username}
-          roomID={roomID}
           setRoomID={setRoomID}
         />
       </div>
