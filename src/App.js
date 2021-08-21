@@ -88,7 +88,7 @@ function App() {
     <div className={classes.root}>
       <CssBaseline />
       <AppBar position="fixed" className={classes.appBar}>
-        <Toolbar>
+        <Toolbar className="Header">
           <Typography variant="h6" noWrap>
             FastMessenger
           </Typography>
