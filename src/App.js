@@ -36,11 +36,13 @@ function App() {
   }, [roomID]);
 
   React.useEffect(() => {
-    db.collection("rooms").onSnapshot((snapshot) => {
-      setRoomNames(
-        snapshot.docs.map((doc) => ({ id: doc.id, name: doc.data() }))
-      );
-    });
+    db.collection("rooms")
+      .orderBy("name", "asc")
+      .onSnapshot((snapshot) => {
+        setRoomNames(
+          snapshot.docs.map((doc) => ({ id: doc.id, name: doc.data() }))
+        );
+      });
   }, []);
 
   const drawerWidth = 240;
@@ -86,7 +88,6 @@ function App() {
     let inputArray = input.split(" ", 2);
     if (inputArray[0].toLowerCase() === "weather") {
       fetchWeather(inputArray[1]).then((data) => {
-        console.log(data);
         data !== undefined &&
           setTimeout(
             db
