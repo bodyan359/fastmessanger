@@ -12,6 +12,7 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 
+import { fetchWeather } from "./api/Weather";
 import db from "./firebase";
 import firebase from "firebase";
 
@@ -81,6 +82,26 @@ function App() {
       username: username,
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
     });
+
+    let inputArray = input.split(" ", 2);
+    if (inputArray[0].toLowerCase() === "weather") {
+      fetchWeather(inputArray[1]).then((data) => {
+        console.log(data);
+        data !== undefined &&
+          setTimeout(
+            db
+              .collection("rooms")
+              .doc(roomID)
+              .collection("messages")
+              .add({
+                data: `Weather in ${data?.location?.name} is ${data?.current?.temp_c}°.Local time: ${data?.location?.localtime}. Condition: ${data?.current?.condition?.text}.`,
+                username: "Weather Bot",
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+              }),
+            2220
+          );
+      });
+    }
     setInput("");
   };
 
@@ -104,7 +125,6 @@ function App() {
       </div>
       <main className={classes.content}>
         <div className={classes.toolbar} />
-
         <FlipMove className="messageStyle">
           {messages.map(({ id, message }) => (
             <Message
