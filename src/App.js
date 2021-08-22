@@ -112,7 +112,7 @@ function App() {
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar className="Header">
           <Typography variant="h6" noWrap>
-            FastMessenger
+            Fast Messenger
           </Typography>
           <Header username={username} />
         </Toolbar>
